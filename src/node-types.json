@@ -8,6 +8,10 @@
         "named": true
       },
       {
+        "type": "arrow_function",
+        "named": true
+      },
+      {
         "type": "bracketed_expression",
         "named": true
       },
@@ -56,10 +60,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "arrow_function",
-        "named": true
-      },
-      {
         "type": "block_string",
         "named": true
       },
@@ -77,6 +77,10 @@
       },
       {
         "type": "string",
+        "named": true
+      },
+      {
+        "type": "table",
         "named": true
       },
       {
@@ -231,6 +235,10 @@
       "required": true,
       "types": [
         {
+          "type": "bracketed_expression",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         }
@@ -342,6 +350,40 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "table",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "table_entry",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "table_entry",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        },
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -469,7 +511,15 @@
     "named": false
   },
   {
+    "type": "[",
+    "named": false
+  },
+  {
     "type": "[[",
+    "named": false
+  },
+  {
+    "type": "]",
     "named": false
   },
   {

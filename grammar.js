@@ -26,13 +26,17 @@ module.exports = grammar({
         [$.tuple, $.parameter_set],
     ],
 
+    precedences: $ => [
+        [$.block, $.table],
+    ],
+
     rules: {
         program: $ => repeat($.statement),
 
-        statement: $ => choice(
+        statement: $ => prec(1, choice(
             $.variable_definition,
             $.function_invocation,
-        ),
+        )),
 
         identifier: _ => /[A-Za-z_][\w_]+/,
 
@@ -91,8 +95,36 @@ module.exports = grammar({
             $._block_string_end,
         ),
 
+        table_entry: $ => choice(
+            seq(
+                choice(
+                    seq(
+                        "[",
+                        $.expression,
+                        "]",
+                    ),
+                    $.identifier,
+                ),
+                "=",
+                $.expression,
+            ),
+            $.expression,
+        ),
+
         table: $ => seq(
             "{",
+            optional(
+                seq(
+                    $.table_entry,
+                    repeat(
+                        seq(
+                            ",",
+                            $.table_entry,
+                        ),
+                    ),
+                    optional(","),
+                ),
+            ),
             "}",
         ),
 
@@ -165,6 +197,7 @@ module.exports = grammar({
             $.multiplication,
             $.bracketed_expression,
             $.tuple,
+            $.arrow_function,
         ),
 
         addition: $ => prec.right(1, seq(
@@ -201,7 +234,7 @@ module.exports = grammar({
             $.verbatim_string,
             $.string,
             $.block_string,
-            $.arrow_function,
+            $.table,
         ),
 
         variable_scope: $ => choice("local", "global"),
@@ -216,8 +249,11 @@ module.exports = grammar({
             ),
         ),
 
-        function_invocation: $ => seq(
-            $.identifier,
+        function_invocation: $ => prec(1, seq(
+            choice(
+                $.identifier,
+                $.bracketed_expression,
+            ),
             "(",
             optional(
                 seq(
@@ -228,10 +264,10 @@ module.exports = grammar({
                             field("parameter", $.expression),
                         ),
                     ),
+                    optional(","),
                 ),
             ),
-            optional(","),
             ")",
-        )
+        ))
     }
 });
