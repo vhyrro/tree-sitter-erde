@@ -15,20 +15,26 @@ module.exports = grammar({
     ],
 
     supertypes: $ => [
-        $.value,
+        $.rvalue,
+        $.lvalue,
+        $.expression,
+        $.statement,
+    ],
+
+    conflicts: $ => [
+        [$.tuple, $.bracketed_expression],
+        [$.tuple, $.parameter_set],
     ],
 
     rules: {
-        program: $ => repeat(
-            choice(
-                $.variable_definition,
-                $.function_invocation,
-            ),
+        program: $ => repeat($.statement),
+
+        statement: $ => choice(
+            $.variable_definition,
+            $.function_invocation,
         ),
 
-        identifier: _ => /[\w_]+/,
-
-        // TODO: $.expression
+        identifier: _ => /[A-Za-z_][\w_]+/,
 
         comment: _ => seq(
             "--",
@@ -56,7 +62,7 @@ module.exports = grammar({
 
         string_interpolation: $ => seq(
             "{",
-            $.identifier, // TODO: This can be any expression
+            $.expression,
             i("}"),
         ),
 
@@ -85,13 +91,117 @@ module.exports = grammar({
             $._block_string_end,
         ),
 
-        value: $ => choice(
+        table: $ => seq(
+            "{",
+            "}",
+        ),
+
+        lvalue: $ => choice(
+            $.rvalue,
+            $.identifier,
+            $.function_invocation,
+        ),
+
+        bracketed_expression: $ => seq(
+            "(",
+            $.expression,
+            ")",
+        ),
+
+        tuple: $ => seq(
+            "(",
+            $.expression,
+            repeat(
+                seq(
+                    ",",
+                    $.expression,
+                ),
+            ),
+            ")",
+        ),
+
+        parameter_set: $ => seq(
+            "(",
+            optional(
+                seq(
+                    field("parameter", $.expression),
+                    repeat(
+                        seq(
+                            ",",
+                            field("parameter", $.expression),
+                        ),
+                    ),
+                ),
+            ),
+            ")",
+        ),
+
+        block: $ => seq(
+            "{",
+            repeat($.statement),
+            "}",
+        ),
+
+        arrow_function: $ => seq(
+            choice(
+                $.identifier,
+                $.parameter_set,
+            ),
+            choice(
+                "->",
+                "=>",
+            ),
+            choice(
+                $.block,
+                $.expression,
+            ),
+        ),
+
+        expression: $ => choice(
+            $.lvalue,
+            $.addition,
+            $.subtraction,
+            $.division,
+            $.multiplication,
+            $.bracketed_expression,
+            $.tuple,
+        ),
+
+        addition: $ => prec.right(1, seq(
+            $.expression,
+            "+",
+            $.expression,
+        )),
+
+        subtraction: $ => prec.right(1, seq(
+            $.expression,
+            "-",
+            $.expression,
+        )),
+
+        multiplication: $ => prec.right(1, seq(
+            $.expression,
+            "*",
+            $.expression,
+        )),
+
+        division: $ => prec.right(1, seq(
+            $.expression,
+            choice(
+                "/",
+                "//",
+            ),
+            $.expression,
+        )),
+
+        rvalue: $ => choice(
             $.boolean,
             $.number,
             $.nil,
             $.verbatim_string,
             $.string,
             $.block_string,
+            $.arrow_function,
         ),
 
         variable_scope: $ => choice("local", "global"),
@@ -101,7 +211,7 @@ module.exports = grammar({
             optional(
                 seq(
                     "=",
-                    field("value", choice($.value, $.function_invocation)),
+                    field("value", $.expression),
                 ),
             ),
         ),
@@ -111,11 +221,11 @@ module.exports = grammar({
             "(",
             optional(
                 seq(
-                    field("parameter", $.value),
+                    field("parameter", $.expression),
                     repeat(
                         seq(
                             ",",
-                            field("parameter", $.value),
+                            field("parameter", $.expression),
                         ),
                     ),
                 ),
