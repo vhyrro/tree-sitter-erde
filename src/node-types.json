@@ -4,6 +4,10 @@
     "named": true,
     "subtypes": [
       {
+        "type": "block_string",
+        "named": true
+      },
+      {
         "type": "boolean",
         "named": true
       },
@@ -24,6 +28,21 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "block_string",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "string_content",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "boolean",
@@ -209,6 +228,10 @@
   },
   {
     "type": "=",
+    "named": false
+  },
+  {
+    "type": "[[",
     "named": false
   },
   {

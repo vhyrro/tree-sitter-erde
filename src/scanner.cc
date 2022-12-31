@@ -7,6 +7,8 @@ using namespace std;
 
 enum TokenType : char {
     STRING_ESCAPED_CHAR,
+    BLOCK_STRING_CONTENT,
+    BLOCK_STRING_END,
 };
 
 struct Scanner {
@@ -17,6 +19,23 @@ struct Scanner {
             advance();
             advance();
             lexer->result_symbol = STRING_ESCAPED_CHAR;
+            return true;
+        }
+        else if (valid_symbols[BLOCK_STRING_END] && lexer->lookahead == ']') {
+            advance();
+
+            if (lexer->lookahead == ']') {
+                advance();
+                lexer->result_symbol = BLOCK_STRING_END;
+                return true;
+            }
+
+            lexer->result_symbol = BLOCK_STRING_CONTENT;
+            return true;
+        }
+        else if (valid_symbols[BLOCK_STRING_CONTENT]) {
+            advance();
+            lexer->result_symbol = BLOCK_STRING_CONTENT;
             return true;
         }
 

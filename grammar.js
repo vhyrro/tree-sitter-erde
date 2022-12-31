@@ -5,6 +5,8 @@ module.exports = grammar({
 
     externals: $ => [
         $.string_escaped_char,
+        $._block_string_content,
+        $._block_string_end,
     ],
 
     extras: $ => [
@@ -70,12 +72,26 @@ module.exports = grammar({
             i('"'),
         ),
 
+        // TODO: Implement hyperblock strings [=[like this]=]
+        block_string: $ => seq(
+            "[[",
+            alias(repeat(
+                choice(
+                    $.string_escaped_char,
+                    $.string_interpolation,
+                    $._block_string_content,
+                ),
+            ), $.string_content),
+            $._block_string_end,
+        ),
+
         value: $ => choice(
             $.boolean,
             $.number,
             $.nil,
             $.verbatim_string,
             $.string,
+            $.block_string,
         ),
 
         variable_scope: $ => choice("local", "global"),
