@@ -1,0 +1,8 @@
+{
+  "name": "tree-sitter-erde",
+  "version": "1.0.0",
+  "description": "Treesitter parser for erde",
+  "main": "bindings/node",
+  "author": "vhyrro",
+  "license": "GPLv3"
+}
