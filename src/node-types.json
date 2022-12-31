@@ -4,6 +4,10 @@
     "named": true,
     "subtypes": [
       {
+        "type": "accessor",
+        "named": true
+      },
+      {
         "type": "addition",
         "named": true
       },
@@ -102,6 +106,21 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "accessor",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "addition",
@@ -234,6 +253,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "accessor",
+          "named": true
+        },
         {
           "type": "bracketed_expression",
           "named": true
@@ -492,6 +515,10 @@
   },
   {
     "type": "->",
+    "named": false
+  },
+  {
+    "type": ".",
     "named": false
   },
   {

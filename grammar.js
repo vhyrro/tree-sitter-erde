@@ -40,6 +40,16 @@ module.exports = grammar({
 
         identifier: _ => /[A-Za-z_][\w_]+/,
 
+        accessor: $ => seq(
+            $.identifier,
+            repeat1(
+                seq(
+                    ".",
+                    $.identifier,
+                ),
+            ),
+        ),
+
         comment: _ => seq(
             "--",
             i(/[^\n]*/),
@@ -198,6 +208,7 @@ module.exports = grammar({
             $.bracketed_expression,
             $.tuple,
             $.arrow_function,
+            $.accessor,
         ),
 
         addition: $ => prec.right(1, seq(
@@ -252,6 +263,7 @@ module.exports = grammar({
         function_invocation: $ => prec(1, seq(
             choice(
                 $.identifier,
+                $.accessor,
                 $.bracketed_expression,
             ),
             "(",
