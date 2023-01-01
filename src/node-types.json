@@ -126,6 +126,10 @@
         "named": true
       },
       {
+        "type": "reassignment_statement",
+        "named": true
+      },
+      {
         "type": "return_statement",
         "named": true
       },
@@ -505,6 +509,21 @@
     }
   },
   {
+    "type": "reassignment_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "comma_separated_expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "return_statement",
     "named": true,
     "fields": {},
@@ -730,7 +749,15 @@
     "named": false
   },
   {
+    "type": "*=",
+    "named": false
+  },
+  {
     "type": "+",
+    "named": false
+  },
+  {
+    "type": "+=",
     "named": false
   },
   {
@@ -743,6 +770,10 @@
   },
   {
     "type": "--",
+    "named": false
+  },
+  {
+    "type": "-=",
     "named": false
   },
   {

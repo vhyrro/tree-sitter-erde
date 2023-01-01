@@ -24,11 +24,13 @@ module.exports = grammar({
     conflicts: $ => [
         [$.tuple, $.bracketed_expression],
         [$.tuple, $.parameter_set],
+        [$.table_entry, $.lvalue],
     ],
 
     precedences: $ => [
         [$.block, $.table],
         [$.parameter, $.lvalue],
+        [$.table_entry, $.comma_separated_expression],
     ],
 
     rules: {
@@ -43,6 +45,7 @@ module.exports = grammar({
             $.while_loop,
             $.for_loop,
             $.return_statement,
+            $.reassignment_statement,
         )),
 
         identifier: _ => /[A-Za-z_][\w_]*/,
@@ -384,6 +387,18 @@ module.exports = grammar({
 
         return_statement: $ => seq(
             "return",
+            $.comma_separated_expression,
+        ),
+
+        reassignment_statement: $ => seq(
+            $.comma_separated_expression,
+            choice(
+                "+=",
+                "-=",
+                /\/\/?=/,
+                "*=",
+                "=",
+            ),
             $.comma_separated_expression,
         ),
     }
