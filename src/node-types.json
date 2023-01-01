@@ -4,10 +4,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "accessor",
-        "named": true
-      },
-      {
         "type": "addition",
         "named": true
       },
@@ -20,6 +16,10 @@
         "named": true
       },
       {
+        "type": "comparison",
+        "named": true
+      },
+      {
         "type": "division",
         "named": true
       },
@@ -29,6 +29,10 @@
       },
       {
         "type": "multiplication",
+        "named": true
+      },
+      {
+        "type": "negation",
         "named": true
       },
       {
@@ -45,6 +49,10 @@
     "type": "lvalue",
     "named": true,
     "subtypes": [
+      {
+        "type": "accessor",
+        "named": true
+      },
       {
         "type": "function_invocation",
         "named": true
@@ -98,7 +106,15 @@
     "named": true,
     "subtypes": [
       {
+        "type": "function_definition",
+        "named": true
+      },
+      {
         "type": "function_invocation",
+        "named": true
+      },
+      {
+        "type": "if_statement",
         "named": true
       },
       {
@@ -220,6 +236,21 @@
     "fields": {}
   },
   {
+    "type": "comparison",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "division",
     "named": true,
     "fields": {},
@@ -229,6 +260,37 @@
       "types": [
         {
           "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "function_definition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "accessor",
+          "named": true
+        },
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "parameter_set",
+          "named": true
+        },
+        {
+          "type": "scope",
           "named": true
         }
       ]
@@ -269,6 +331,25 @@
     }
   },
   {
+    "type": "if_statement",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "block",
+          "named": true
+        },
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "multiplication",
     "named": true,
     "fields": {},
@@ -284,11 +365,26 @@
     }
   },
   {
-    "type": "parameter_set",
+    "type": "negation",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "expression",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter",
     "named": true,
     "fields": {
-      "parameter": {
-        "multiple": true,
+      "default_value": {
+        "multiple": false,
         "required": false,
         "types": [
           {
@@ -297,6 +393,31 @@
           }
         ]
       }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "parameter_set",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        }
+      ]
     }
   },
   {
@@ -313,6 +434,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "scope",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "string",
@@ -447,20 +573,15 @@
       "required": true,
       "types": [
         {
-          "type": "variable_name",
+          "type": "scope",
           "named": true
         },
         {
-          "type": "variable_scope",
+          "type": "variable_name",
           "named": true
         }
       ]
     }
-  },
-  {
-    "type": "variable_scope",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "verbatim_string",
@@ -476,6 +597,14 @@
         }
       ]
     }
+  },
+  {
+    "type": "!",
+    "named": false
+  },
+  {
+    "type": "!=",
+    "named": false
   },
   {
     "type": "\"",
@@ -530,11 +659,31 @@
     "named": false
   },
   {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<=",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
   {
+    "type": "==",
+    "named": false
+  },
+  {
     "type": "=>",
+    "named": false
+  },
+  {
+    "type": ">",
+    "named": false
+  },
+  {
+    "type": ">=",
     "named": false
   },
   {
@@ -554,6 +703,10 @@
     "named": false
   },
   {
+    "type": "function",
+    "named": false
+  },
+  {
     "type": "global",
     "named": false
   },
@@ -562,7 +715,15 @@
     "named": true
   },
   {
+    "type": "if",
+    "named": false
+  },
+  {
     "type": "local",
+    "named": false
+  },
+  {
+    "type": "module",
     "named": false
   },
   {

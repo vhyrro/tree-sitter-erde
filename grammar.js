@@ -28,6 +28,7 @@ module.exports = grammar({
 
     precedences: $ => [
         [$.block, $.table],
+        [$.parameter, $.lvalue],
     ],
 
     rules: {
@@ -36,9 +37,11 @@ module.exports = grammar({
         statement: $ => prec(1, choice(
             $.variable_definition,
             $.function_invocation,
+            $.function_definition,
+            $.if_statement,
         )),
 
-        identifier: _ => /[A-Za-z_][\w_]+/,
+        identifier: _ => /[A-Za-z_][\w_]*/,
 
         accessor: $ => seq(
             $.identifier,
@@ -141,14 +144,15 @@ module.exports = grammar({
         lvalue: $ => choice(
             $.rvalue,
             $.identifier,
+            $.accessor,
             $.function_invocation,
         ),
 
-        bracketed_expression: $ => seq(
+        bracketed_expression: $ => prec.dynamic(1, seq(
             "(",
             $.expression,
             ")",
-        ),
+        )),
 
         tuple: $ => seq(
             "(",
@@ -162,15 +166,25 @@ module.exports = grammar({
             ")",
         ),
 
+        parameter: $ => seq(
+            $.identifier,
+            optional(
+                seq(
+                    "=",
+                    field("default_value", $.expression),
+                ),
+            ),
+        ),
+
         parameter_set: $ => seq(
             "(",
             optional(
                 seq(
-                    field("parameter", $.expression),
+                    $.parameter,
                     repeat(
                         seq(
                             ",",
-                            field("parameter", $.expression),
+                            $.parameter,
                         ),
                     ),
                 ),
@@ -208,7 +222,8 @@ module.exports = grammar({
             $.bracketed_expression,
             $.tuple,
             $.arrow_function,
-            $.accessor,
+            $.comparison,
+            $.negation,
         ),
 
         addition: $ => prec.right(1, seq(
@@ -238,6 +253,24 @@ module.exports = grammar({
             $.expression,
         )),
 
+        comparison: $ => prec.right(1, seq(
+            $.expression,
+            choice(
+                "==",
+                "!=",
+                "<",
+                ">",
+                "<=",
+                ">=",
+            ),
+            $.expression,
+        )),
+
+        negation: $ => seq(
+            "!",
+            $.expression,
+        ),
+
         rvalue: $ => choice(
             $.boolean,
             $.number,
@@ -248,9 +281,9 @@ module.exports = grammar({
             $.table,
         ),
 
-        variable_scope: $ => choice("local", "global"),
+        scope: $ => choice("local", "global", "module"),
         variable_definition: $ => seq(
-            $.variable_scope,
+            $.scope,
             alias($.identifier, $.variable_name),
             optional(
                 seq(
@@ -280,6 +313,23 @@ module.exports = grammar({
                 ),
             ),
             ")",
-        ))
+        )),
+
+        function_definition: $ => seq(
+            optional($.scope),
+            "function",
+            choice(
+                $.identifier,
+                $.accessor,
+            ),
+            $.parameter_set,
+            $.block,
+        ),
+
+        if_statement: $ => seq(
+            "if",
+            $.expression,
+            $.block,
+        ),
     }
 });
