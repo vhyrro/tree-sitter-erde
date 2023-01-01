@@ -39,6 +39,9 @@ module.exports = grammar({
             $.function_invocation,
             $.function_definition,
             $.if_statement,
+            $.do_block,
+            $.while_loop,
+            $.for_loop,
         )),
 
         identifier: _ => /[A-Za-z_][\w_]*/,
@@ -152,6 +155,16 @@ module.exports = grammar({
             "(",
             $.expression,
             ")",
+        )),
+
+        comma_separated_expression: $ => prec.right(seq(
+            $.expression,
+            prec.right(repeat(
+                seq(
+                    ",",
+                    $.expression,
+                ),
+            )),
         )),
 
         tuple: $ => seq(
@@ -329,6 +342,42 @@ module.exports = grammar({
         if_statement: $ => seq(
             "if",
             $.expression,
+            $.block,
+        ),
+
+        do_block: $ => seq(
+            "do",
+            $.block,
+        ),
+
+        while_loop: $ => seq(
+            "while",
+            $.expression,
+            $.block,
+        ),
+
+        for_loop: $ => seq(
+            "for",
+            choice(
+                seq(
+                    $.comma_separated_expression,
+                    "in",
+                    $.comma_separated_expression,
+                ),
+                seq(
+                    $.expression,
+                    "=",
+                    $.expression,
+                    ",",
+                    $.expression,
+                    optional(
+                        seq(
+                            ",",
+                            $.expression,
+                        ),
+                    ),
+                ),
+            ),
             $.block,
         ),
     }
