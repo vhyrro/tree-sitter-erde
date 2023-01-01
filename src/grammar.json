@@ -41,6 +41,10 @@
           {
             "type": "SYMBOL",
             "name": "for_loop"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "return_statement"
           }
         ]
       }
@@ -1149,6 +1153,19 @@
         {
           "type": "SYMBOL",
           "name": "block"
+        }
+      ]
+    },
+    "return_statement": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "return"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "comma_separated_expression"
         }
       ]
     }

@@ -42,6 +42,7 @@ module.exports = grammar({
             $.do_block,
             $.while_loop,
             $.for_loop,
+            $.return_statement,
         )),
 
         identifier: _ => /[A-Za-z_][\w_]*/,
@@ -379,6 +380,11 @@ module.exports = grammar({
                 ),
             ),
             $.block,
+        ),
+
+        return_statement: $ => seq(
+            "return",
+            $.comma_separated_expression,
         ),
     }
 });
