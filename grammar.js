@@ -19,12 +19,17 @@ module.exports = grammar({
         $.lvalue,
         $.expression,
         $.statement,
+        $.destructure,
     ],
 
     conflicts: $ => [
         [$.tuple, $.bracketed_expression],
         [$.tuple, $.parameter_set],
         [$.table_entry, $.lvalue],
+        [$.table_destructured_element, $.lvalue],
+        [$.table_entry, $.table_destructured_element],
+        [$.array_destructured_element, $.lvalue],
+        [$.table_entry, $.lvalue, $.table_destructured_element],
     ],
 
     precedences: $ => [
@@ -46,6 +51,11 @@ module.exports = grammar({
             $.for_loop,
             $.return_statement,
             $.reassignment_statement,
+            $.repeat_until_statement,
+            $.try_catch_statement,
+            $.continue_statement,
+            $.goto_statement,
+            $.label_definition,
         )),
 
         identifier: _ => /[A-Za-z_][\w_]*/,
@@ -184,7 +194,7 @@ module.exports = grammar({
         ),
 
         parameter: $ => seq(
-            $.identifier,
+            choice($.identifier, $.destructure),
             optional(
                 seq(
                     "=",
@@ -218,6 +228,7 @@ module.exports = grammar({
         arrow_function: $ => seq(
             choice(
                 $.identifier,
+                $.destructure,
                 $.parameter_set,
             ),
             choice(
@@ -298,10 +309,65 @@ module.exports = grammar({
             $.table,
         ),
 
+        table_destructured_element: $ => seq(
+            $.identifier,
+            optional(
+                seq(
+                    ":",
+                    $.identifier,
+                ),
+            ),
+            optional(
+                seq(
+                    "=",
+                    field("default_value", $.expression),
+                ),
+            ),
+        ),
+
+        table_destructure: $ => seq(
+            "{",
+            $.table_destructured_element,
+            repeat(
+                seq(
+                    ",",
+                    $.table_destructured_element,
+                ),
+            ),
+            "}",
+        ),
+
+        array_destructured_element: $ => seq(
+            $.identifier,
+            optional(
+                seq(
+                    "=",
+                    field("default_value", $.expression),
+                ),
+            ),
+        ),
+
+        array_destructure: $ => seq(
+            "[",
+            $.array_destructured_element,
+            repeat(
+                seq(
+                    ",",
+                    $.array_destructured_element,
+                ),
+            ),
+            "]",
+        ),
+
+        destructure: $ => choice(
+            $.table_destructure,
+            $.array_destructure,
+        ),
+
         scope: $ => choice("local", "global", "module"),
         variable_definition: $ => seq(
             $.scope,
-            alias($.identifier, $.variable_name),
+            choice(alias($.identifier, $.variable_name), $.destructure),
             optional(
                 seq(
                     "=",
@@ -347,6 +413,19 @@ module.exports = grammar({
             "if",
             $.expression,
             $.block,
+            repeat(
+                seq(
+                    "elseif",
+                    $.expression,
+                    $.block,
+                ),
+            ),
+            optional(
+                seq(
+                    "else",
+                    $.block,
+                ),
+            ),
         ),
 
         do_block: $ => seq(
@@ -388,6 +467,34 @@ module.exports = grammar({
         return_statement: $ => seq(
             "return",
             $.comma_separated_expression,
+        ),
+
+        repeat_until_statement: $ => seq(
+            "repeat",
+            $.block,
+            "until",
+            $.expression,
+        ),
+
+        try_catch_statement: $ => seq(
+            "try",
+            $.block,
+            "catch",
+            optional(choice($.identifier, $.destructure)),
+            $.block,
+        ),
+
+        continue_statement: _ => "continue",
+
+        goto_statement: $ => seq(
+            "goto",
+            $.identifier,
+        ),
+
+        label_definition: $ => seq(
+            "::",
+            $.identifier,
+            "::",
         ),
 
         reassignment_statement: $ => seq(
