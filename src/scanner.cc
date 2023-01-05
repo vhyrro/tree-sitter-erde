@@ -33,7 +33,7 @@ struct Scanner {
             lexer->result_symbol = BLOCK_STRING_CONTENT;
             return true;
         }
-        else if (valid_symbols[BLOCK_STRING_CONTENT]) {
+        else if (valid_symbols[BLOCK_STRING_CONTENT] && !lexer->eof(lexer)) {
             advance();
             lexer->result_symbol = BLOCK_STRING_CONTENT;
             return true;
@@ -44,7 +44,7 @@ struct Scanner {
 
     inline void skip() { lexer->advance(lexer, true); }
 
-    inline void advance() { lexer->advance(lexer, false); }
+    inline void advance() { if (lexer->lookahead) lexer->advance(lexer, false); }
 };
 
 extern "C" {
