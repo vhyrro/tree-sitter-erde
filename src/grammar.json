@@ -1075,10 +1075,10 @@
               "type": "ALIAS",
               "content": {
                 "type": "SYMBOL",
-                "name": "identifier"
+                "name": "comma_separated_expression"
               },
               "named": true,
-              "value": "variable_name"
+              "value": "variable_names"
             },
             {
               "type": "SYMBOL",

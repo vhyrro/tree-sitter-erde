@@ -367,7 +367,7 @@ module.exports = grammar({
         scope: $ => choice("local", "global", "module"),
         variable_definition: $ => seq(
             $.scope,
-            choice(alias($.identifier, $.variable_name), $.destructure),
+            choice(alias($.comma_separated_expression, $.variable_names), $.destructure),
             optional(
                 seq(
                     "=",
